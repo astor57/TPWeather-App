@@ -1,67 +1,88 @@
-import { useState } from 'react';
-import { getCurrentWeather } from '@/services/weatherApi.js';
+import { useState } from 'react'
+import './App.css'
 
-const App = () => {
-  const [city, setCity] = useState('');
-  const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+function App() {
+  const [city, setCity] = useState('')
+  const [weatherData, setWeatherData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
-  const handleSearch = async () => {
-    if (!city.trim()) return;
+  const API_KEY = '38d94c5f72665cea98e2635d83720e01'
+
+  const fetchWeather = async () => {
+    if (!city) return
     
-    setLoading(true);
-    setError('');
+    setLoading(true)
+    setError(null)
     
     try {
-      const data = await getCurrentWeather(city);
-      setWeather(data);
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
+      )
+      
+      
+      if (!response.ok) {
+        throw new Error('Ciudad no encontrada')
+      }
+      
+      const data = await response.json()
+      console.log(data) 
+      setWeatherData(data)
     } catch (err) {
-      setError(err.message);
-      setWeather(null);
+      setError(err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    fetchWeather()
+  }
 
   return (
-    <div className="min-h-screen p-8 bg-background">
-      <div className="max-w-md mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Weather App</h1>
-        
-        <div className="flex gap-2 mb-4">
-          <Input
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Ingresa una ciudad"
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          />
-          <Button onClick={handleSearch} disabled={loading}>
-            {loading ? 'Buscando...' : 'Buscar'}
-          </Button>
-        </div>
+    <div className="weather-app">
+      <h1>Weather App</h1>
+      
+      <form onSubmit={handleSubmit} className="search-form">
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="Ingresa una ciudad..."
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Buscando...' : 'Buscar'}
+        </button>
+      </form>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-            {error}
-          </div>
-        )}
+      {error && <p className="error">{error}</p>}
 
-        {weather && (
-          <div className="bg-card p-4 rounded border">
-            <h2 className="text-xl font-semibold mb-2">{weather.name}, {weather.sys.country}</h2>
-            <p className="text-3xl font-bold">{Math.round(weather.main.temp)}°C</p>
-            <p className="capitalize">{weather.weather[0].description}</p>
-            <div className="mt-2 text-sm text-muted-foreground">
-              <p>Sensación térmica: {Math.round(weather.main.feels_like)}°C</p>
-              <p>Humedad: {weather.main.humidity}%</p>
-              <p>Viento: {weather.wind.speed} m/s</p>
+      {weatherData && (
+        <div className="weather-card">
+          <h2>{weatherData.name}, {weatherData.sys.country}</h2>
+          <div className="weather-main">
+            <img
+              src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+              alt={weatherData.weather[0].description}
+            />
+            <div>
+              <p className="temp">{Math.round(weatherData.main.temp)}°C</p>
+              <p>{weatherData.weather[0].description}</p>
             </div>
           </div>
-        )}
-      </div>
+          <div className="weather-details">
+            <p>Humedad: {weatherData.main.humidity}%</p>
+            <p>Viento: {weatherData.wind.speed} m/s</p>
+            <p>Viento deg: {weatherData.wind.deg}</p>
+            <p>Mín: {Math.round(weatherData.main.temp_min)}°C</p>
+            <p>Máx: {Math.round(weatherData.main.temp_max)}°C</p>
+            <p>Sea level: {weatherData.main.sea_level}</p>
+          </div>
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
