@@ -1,0 +1,106 @@
+/* Estilos base */
+.weather-app {
+    min-height: 100vh;
+    padding: 2rem;
+    color: white;
+    transition: all 0.5s ease-in-out;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Fondos para cada tipo de clima */
+  .sunny-bg {
+    background: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%);
+  }
+  
+  .cloudy-bg {
+    background: linear-gradient(135deg, #B7B7B7 0%, #5A5A5A 100%);
+  }
+  
+  .rainy-bg {
+    background: linear-gradient(135deg, #4B79A1 0%, #283E51 100%);
+  }
+  
+  .snowy-bg {
+    background: linear-gradient(135deg, #E6F0FA 0%, #B8C6DB 100%);
+    color: #333;
+  }
+  
+  .stormy-bg {
+    background: linear-gradient(135deg, #0F2027 0%, #203A43 50%, #2C5364 100%);
+  }
+  
+  /* Efectos especiales */
+  .rainy-bg::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://assets.codepen.io/1538474/rain.png');
+    animation: rain 0.5s linear infinite;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  
+  .snowy-bg::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://assets.codepen.io/1538474/snow.png');
+    animation: snow 10s linear infinite;
+    pointer-events: none;
+  }
+  
+  .stormy-bg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    animation: lightning 4s linear infinite;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  @keyframes rain {
+    0% { background-position: 0 0; }
+    100% { background-position: 20% 100%; }
+  }
+  
+  @keyframes snow {
+    0% { background-position: 0 0; }
+    100% { background-position: 100px 500px; }
+  }
+  
+  @keyframes lightning {
+    0% { opacity: 0; }
+    1% { opacity: 0.6; }
+    2% { opacity: 0; }
+    8% { opacity: 0; }
+    9% { opacity: 0.3; }
+    10% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  
+  /* Selector de clima para pruebas */
+  .weather-selector {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+  
+  .weather-selector select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.8);
+    border: none;
+  }
+  
